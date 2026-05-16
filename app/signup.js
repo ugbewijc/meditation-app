@@ -4,6 +4,7 @@ import {
     SafeAreaView,
     Image,
     Alert,
+    Platform,
     TextInput,
     Text,
     TouchableOpacity
@@ -18,13 +19,32 @@ const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
-    const handleRegister = async () => {
-        if (!userName || !email || !password) {
-            Alert.alert("Validation Error", "Please fill in all fields.");
+
+    const showAlert = (title, message) => {
+        if (Platform.OS === "web" && typeof window !== "undefined") {
+            window.alert(`${title}\n${message}`);
             return;
         }
 
-        const userDetails = { userName, email, password, token: "sample-token" };
+        Alert.alert(title, message);
+    };
+
+    const handleRegister = async () => {
+        const trimmedUserName = userName.trim();
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedUserName || !trimmedEmail || !trimmedPassword) {
+            showAlert("Validation Error", "Please fill in all fields.");
+            return;
+        }
+
+        const userDetails = {
+            userName: trimmedUserName,
+            email: trimmedEmail,
+            password: trimmedPassword,
+            token: "sample-token"
+        };
         await AsyncStorage.setItem("userDetails", JSON.stringify(userDetails));
         console.log("User logged in:", userDetails);
 

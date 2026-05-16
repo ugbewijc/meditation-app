@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { View, SafeAreaView, Image, Alert, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, SafeAreaView, Image, Alert, Platform, Text, TextInput, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 import { COLORS, icons, SHADOWS } from "../constants";
@@ -9,13 +9,26 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
-    const handleLogin = async () => {
-        if (!email || !password) {
-            Alert.alert("Validation Error", "Please fill in all fields.");
+
+    const showAlert = (title, message) => {
+        if (Platform.OS === "web" && typeof window !== "undefined") {
+            window.alert(`${title}\n${message}`);
             return;
         }
 
-        const userDetails = { email, password, token: "sample-token" };
+        Alert.alert(title, message);
+    };
+
+    const handleLogin = async () => {
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedEmail || !trimmedPassword) {
+            showAlert("Validation Error", "Please fill in all fields.");
+            return;
+        }
+
+        const userDetails = { email: trimmedEmail, password: trimmedPassword, token: "sample-token" };
 
         console.log('userDetails', userDetails);
 
@@ -26,12 +39,10 @@ const Login = () => {
                 if (userDetails.email === parsedDetails.email && userDetails.password === parsedDetails.password) {
                     router.push("/home");
                 } else {
-                    Alert.alert("Error", "Incorrect email or password.");
-                    alert("Error Incorrect email or password.");
+                    showAlert("Error", "Incorrect email or password.");
                 }
             } else {
-                Alert.alert("Error", "No user details found in AsyncStorage.");
-                alert("Error No user details found in AsyncStorage.");
+                showAlert("Error", "No user details found in AsyncStorage.");
             }
         } catch (error) {
             console.error("Error accessing AsyncStorage", error);
