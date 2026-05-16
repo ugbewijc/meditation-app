@@ -32,10 +32,13 @@ const Home = () => {
                         }}
                         testID="screensDisplay"
                     >
-                        <Welcome userDetails={userDetails ? JSON.parse(userDetails) : null} />
-                        <PopularMeditation />
-                        <DailyMeditation />
-
+                        {/* <Welcome userDetails={userDetails ? JSON.parse(userDetails) : null} /> */}
+                        {/* <PopularMeditation /> */}
+                        {/* <DailyMeditation /> */}
+                        <Welcome userDetails={userDetails ? JSON.parse(userDetails) : null} isDarkMode={isDarkMode} />
+                        <DailyQuote />
+                        <PopularMeditation isDarkMode={isDarkMode} />
+                        <DailyMeditation isDarkMode={isDarkMode} />
 
                     </View>
                 </ScrollView>
